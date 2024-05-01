@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Number</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            width: 300px;
+            position: relative;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        p {
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        input[type="number"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100px;
+        }
+
+        button {
+            padding: 8px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .congrats {
+            color: green;
+        }
+
+        .toolow, .toohigh {
+            color: red;
+            animation: blink 0.5s infinite alternate;
+        }
+
+        @keyframes blink {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        #leaderboard {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-align: right;
+            font-size: 14px;
+            color: #666;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="leaderboard">
+        <h2>Leaderboard</h2>
+        <ol id="leaderboardList">
+        </ol>
+    </div>
+    <div class="container">
+        
+        <h1>Guess the Number</h1>
+        <p>Guess a number between 1 and 100:</p>
+        <input type="number" id="guessInput" min="1" max="100" onkeydown="if (event.keyCode == 13) checkGuess()">
+        <button onclick="checkGuess()">Submit</button>
+        <p id="result"></p>
+        <p>Attempts: <span id="attempts">0</span></p>
+        <button onclick="resetGame()">Replay</button>
+    </div>
+
+    <script>
+        let attempts = 0;
+        let randomNumber = Math.floor(Math.random() * 100) + 1;
+        let leaderboardData = [];
+
+        function checkGuess() {
+            attempts++;
+            document.getElementById('attempts').textContent = attempts;
+
+            const userGuess = parseInt(document.getElementById('guessInput').value);
+            const resultText = document.getElementById('result');
+
+            if (isNaN(userGuess) || userGuess < 1 || userGuess > 100 || !Number.isInteger(userGuess)) {
+                resultText.textContent = 'Please enter a valid integer number between 1 and 100.';
+            } else {
+                if (userGuess === randomNumber) {
+                    const playerName = prompt('Congratulations! You guessed the correct number! Enter your name for the leaderboard:');
+                    if (playerName) {
+                        leaderboardData.push({ name: playerName, attempts: attempts });
+                        updateLeaderboard();
+                        resetGame();
+                    }
+                } else if (userGuess < randomNumber) {
+                    resultText.innerHTML = '<span class="toolow">Too low! Try again.</span>';
+                } else {
+                    resultText.innerHTML = '<span class="toohigh">Too high! Try again.</span>';
+                }
+
+                resultText.style.display = 'block';
+            }
+        }
+
+        function updateLeaderboard() {
+            const leaderboardList = document.getElementById('leaderboardList');
+            leaderboardList.innerHTML = '';
+
+            leaderboardData.sort((a, b) => a.attempts - b.attempts);
+
+            leaderboardData.slice(0, 5).forEach((entry, index) => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${entry.name}: ${entry.attempts} attempts`;
+                leaderboardList.appendChild(listItem);
+            });
+
+            document.getElementById('leaderboard').style.display = 'block';
+        }
+
+        function resetGame() {
+            attempts = 0;
+            randomNumber = Math.floor(Math.random() * 100) + 1;
+            document.getElementById('attempts').textContent = attempts;
+            document.getElementById('guessInput').removeAttribute('disabled');
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('guessInput').value = '';
+        }
+    </script>
+</body>
+</html>
