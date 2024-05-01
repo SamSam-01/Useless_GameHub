@@ -103,13 +103,14 @@ function checkLetter(letter) {
 }
 
 function checkGameStatus() {
-    if (remainingAttempts === 0) {
-        alert(`You lost! The word was "${word}".`);
-        initGame();
-    } else if (word.split('').every(letter => guessedLetters.includes(letter))) {
-        alert('Congratulations! You won!');
-        initGame();
-    }
+  if (remainingAttempts === 0) {
+      alert(`You lost! The word was "${word}".`);
+      initGame();
+  } else if (word.split('').every(letter => guessedLetters.includes(letter))) {
+      alert('Congratulations! You won!');
+      initGame();
+  }
+  document.getElementById('remainingAttempts').textContent = remainingAttempts;
 }
 
 function resetGame() {
